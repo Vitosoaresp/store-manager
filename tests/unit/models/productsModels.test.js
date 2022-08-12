@@ -25,6 +25,14 @@ describe('Test Model products', () => {
       expect(getProduct.name).to.be.equal('Baby yoda');
     });
   });
-  describe('Testa ao procurar por um produto', () => {
+  describe('Testa ao criar um produto', () => {
+    const FAKE_PRODUCT = { name: 'Baby yoda' };
+    it('Deve retornar o produto criado', async () => {
+      sinon.stub(connection, 'execute').resolves([{ insertId: 5 }]);
+      const createProduct = await productModels.create({ name: 'Baby yoda 2.0' });
+      expect(createProduct).to.be.all.keys('id', 'name');
+      expect(createProduct.id).to.be.equal(5);
+      expect(createProduct.name).to.be.equal('Baby yoda 2.0');
+    })
   });
 });

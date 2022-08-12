@@ -43,4 +43,40 @@ describe('Test controllers products', () => {
       expect(res.json.calledWith({ message: 'Product not found' })).to.be.true;
     });
   });
+  describe('Ao criar um produto', () => {
+    const FAKE_PRODUCT = { id: 5, name: 'Baby yoda 2.0' };
+    it('Se sucesso deve retornar status 201', async () => {
+      sinon.stub(productServices, 'create').resolves({ code: 201, data: FAKE_PRODUCT, message: null });
+      const req = { body: { name: 'Baby yoda 2.0' } };
+      const res = {};
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      await productControllers.create(req, res);
+
+      expect(res.status.calledWith(201)).to.be.true;
+    });
+    it('Se não passado nenhum nome deve retornar status 400', async () => {
+      sinon.stub(productServices, 'create').resolves({ code: 400, message: '"name" is required' });
+      const req = { body: {} };
+      const res = {};
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      await productControllers.create(req, res);
+
+      expect(res.status.calledWith(400)).to.be.true;
+    })
+    it('Se passado nome menor que 5 caracteres deve retornar status 422', async () => {
+      sinon.stub(productServices, 'create').resolves({ code: 422, message: '"name" length must be at least 5 characters long' });
+      const req = { body: { name: 'Baby' } };
+      const res = {};
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      await productControllers.create(req, res);
+
+      expect(res.status.calledWith(422)).to.be.true;
+    });
+  });
 });
