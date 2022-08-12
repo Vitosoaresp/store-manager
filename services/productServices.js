@@ -3,10 +3,6 @@ const productModel = require('../models/productModels');
 const getAll = async () => {
   const products = await productModel.getAll();
 
-  // if (products.length === 0) {
-  //   return [];
-  // }
-
   return { code: 200, data: products };
 };
 
