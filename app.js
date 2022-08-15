@@ -11,11 +11,12 @@ app.get('/', (_request, response) => {
   response.send();
 });
 
+app.get('/products/:id', rescue(productController.getById));
 app.get('/products', rescue(productController.getAll));
 app.post('/products', rescue(productController.create));
 
-app.get('/products/:id', rescue(productController.getById));
-
+app.get('/sales/:id', rescue(salesProductsController.getById));
+app.get('/sales', rescue(salesProductsController.getAll));
 app.post('/sales', rescue(salesProductsController.create));
 
 app.use((err, _req, res, _next) => {
