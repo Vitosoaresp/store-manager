@@ -14,6 +14,7 @@ app.get('/', (_request, response) => {
 app.get('/products/:id', rescue(productController.getById));
 app.get('/products', rescue(productController.getAll));
 app.post('/products', rescue(productController.create));
+app.put('/products/:id', rescue(productController.update));
 
 app.get('/sales/:id', rescue(salesProductsController.getById));
 app.get('/sales', rescue(salesProductsController.getAll));
