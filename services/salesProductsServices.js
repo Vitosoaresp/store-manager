@@ -2,6 +2,21 @@ const salesModels = require('../models/salesModels');
 const salesProuctsModels = require('../models/salesProductsModels');
 const productServices = require('./productServices');
 
+const getAll = async () => {
+  const sales = await salesProuctsModels.getAll();
+  return { code: 200, data: sales };
+};
+
+const getById = async ({ id }) => {
+  const sales = await salesProuctsModels.getById({ id });
+
+  if (sales.length === 0) {
+    return { code: 404, message: 'Sale not found' };
+  }
+
+  return { code: 200, data: sales };
+};
+
 const isInvalidProduct = async (sales) => {
   const result = [];
   await Promise.all(sales.map((sale) => productServices.getById(
@@ -31,4 +46,4 @@ const create = async (sales) => {
   return { code: 201, data: { id: saleId, itemsSold: sales } };
 };
 
-module.exports = { create };
+module.exports = { create, getAll, getById };
