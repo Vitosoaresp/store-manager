@@ -8,6 +8,48 @@ const productServices = require('../../../services/productServices');
 describe('Test Services sales_products', () => {
   beforeEach(sinon.restore);
 
+  const FAKE_SALES = [
+    {
+      "saleId": 1,
+      "date": "2021-09-09T04:54:29.000Z",
+      "productId": 1,
+      "quantity": 2
+    },
+    {
+      "saleId": 2,
+      "date": "2021-09-09T04:54:54.000Z",
+      "productId": 2,
+      "quantity": 2
+    }
+  ];
+  describe('Ao listar as vendas', () => {
+    it('Deve retornar todas as vendas', async () => {
+      sinon.stub(salesProductsModels, 'getAll').resolves(FAKE_SALES);
+      const { data } = await salesProductsServices.getAll();
+      expect(data).to.be.an('array');
+      expect(data[0]).to.be.have.all.keys('saleId', 'date', 'productId', 'quantity');
+    })
+  });
+
+  describe('Ao listar uma venda especifica', () => {
+    it('Se sucesso deve retornar a venda especifica', async () => {
+      sinon.stub(salesProductsModels, 'getById').resolves(FAKE_SALES[0]);
+      const { data, message } = await salesProductsServices.getById(1);
+      expect(data).to.be.have.all.keys('saleId', 'date', 'productId', 'quantity');
+      expect(data.saleId).to.be.equal(1);
+      expect(data.date).to.be.equal('2021-09-09T04:54:29.000Z');
+      expect(data.productId).to.be.equal(1);
+      expect(data.quantity).to.be.equal(2);
+      expect(message).to.be.undefined;
+    });
+    it('Se não encontrar a venda especifica deve retornar um erro', async () => {
+      sinon.stub(salesProductsModels, 'getById').resolves([]);
+      const { message, data } = await salesProductsServices.getById(1);
+      expect(message).to.be.equal('Sale not found');
+      expect(data).to.be.undefined;
+    });
+  });
+
   describe('Ao criar uma venda', () => {
     const FAKE_SALES = [{ productId: 1, quantity: 1 }, { productId: 2, quantity: 2 }];
     const FAKE_SALES_WHITHOUT_PRODUCT_ID = [{ productId: 1, quantity: 1 }, { quantity: 2 }];
