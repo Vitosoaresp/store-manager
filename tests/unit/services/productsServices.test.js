@@ -5,12 +5,12 @@ const productServices = require('../../../services/productServices');
 
 describe('Test Services products', () => {
   beforeEach(sinon.restore);
+  const FAKE_PRODUCT = { id: 1, name: 'Baby yoda' };
 
   describe('Ao buscar pelos produtos', () => {
     const FAKE_PRODUCTS = [
       { id: 1, name: 'Baby yoda' }, { id: 2, name: 'Darth vader' }, { id: 3, name: 'Luke skywalker' },
     ];
-    const FAKE_PRODUCT = { id: 1, name: 'Baby yoda' };
     it('Deve retornar todos os produtos', async () => {
       sinon.stub(productModels, 'getAll').resolves(FAKE_PRODUCTS);
       const { data } = await productServices.getAll();
@@ -36,6 +36,7 @@ describe('Test Services products', () => {
       expect(message).to.be.equal('Product not found');
     });
   });
+
   describe('Ao cadastrar um produto', () => {
     const FAKE_PRODUCT = { id: 5, name: 'Baby yoda 2.0' };
     it('Deve retornar o produto cadastrado', async () => {
@@ -57,6 +58,40 @@ describe('Test Services products', () => {
       const { data, message } = await productServices.create({ name: 'Baby' });
       expect(data).to.be.undefined;
       expect(message).to.be.equal('"name" length must be at least 5 characters long');
+    });
+  });
+
+  describe('Ao atualizar um produto', () => {
+    it('Deve retornar o produto atualizado', async () => {
+      sinon.stub(productModels, 'update').resolves(FAKE_PRODUCT);
+      sinon.stub(productModels, 'getById').resolves([FAKE_PRODUCT]);
+      const result = await productServices.update({ id: 1, name: 'Baby yoda 2.0' });
+      expect(result.message).to.be.undefined;
+      expect(result.data).to.be.all.keys('id', 'name');
+    });
+
+    it('Caso não seja passado o nome do produto, deve retornar um erro', async () => {
+      sinon.stub(productModels, 'update').resolves(FAKE_PRODUCT);
+      sinon.stub(productModels, 'getById').resolves([FAKE_PRODUCT]);
+      const result = await productServices.update({ id: 1, name: '' });
+      expect(result.message).to.be.equal('"name" is required');
+      expect(result.data).to.be.undefined;
+    });
+
+    it('Caso o nome seja menor que 5 caracteress, deve retornar um erro', async () => {
+      sinon.stub(productModels, 'update').resolves(FAKE_PRODUCT);
+      sinon.stub(productModels, 'getById').resolves([FAKE_PRODUCT]);
+      const result = await productServices.update({ id: 1, name: 'Baby' });
+      expect(result.message).to.be.equal('"name" length must be at least 5 characters long');
+      expect(result.data).to.be.undefined;
+    });
+
+    it('Caso o produto não exista, deve retornar um erro', async () => {
+      sinon.stub(productModels, 'update').resolves(FAKE_PRODUCT);
+      sinon.stub(productModels, 'getById').resolves([null]);
+      const result = await productServices.update({ id: 1, name: 'Baby yoda 2.0' });
+      expect(result.message).to.be.equal('Product not found');
+      expect(result.data).to.be.undefined;
     });
   });
 });

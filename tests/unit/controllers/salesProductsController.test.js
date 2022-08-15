@@ -39,7 +39,6 @@ describe('Test Controller sales_products', () => {
       res.status = sinon.stub().returns(res);
       res.json = sinon.stub().returns(res);
       await salesProductsController.getById(req, res);
-      console.log(res.status.calledWith(404), 'aaaaaaaa-----------------');
       expect(res.status.calledWith(404)).to.be.true;
     });
   });
