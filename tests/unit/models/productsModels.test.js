@@ -7,7 +7,7 @@ describe('Test Model products', () => {
   beforeEach(sinon.restore);
   const FAKE_PRODUCT = { id: 1, name: 'Baby yoda' };
 
-  describe('Testa ao procurar os produtos', () => {
+  describe('Testa ao Listar todos os produtos', () => {
     const FAKE_PRODUCTS = [
       { id: 1, name: 'Baby yoda' }, { id: 2, name: 'Darth vader' }, { id: 3, name: 'Luke skywalker' },
     ];
@@ -17,6 +17,8 @@ describe('Test Model products', () => {
       expect(getProducts).to.be.eql(FAKE_PRODUCTS);
       getProducts.map((product) => expect(product).to.be.all.keys('id', 'name'));
     });
+  })
+  describe('Testa ao Listar um produto', () => {
     it('Deve retornar o produto especifico', async () => {
       sinon.stub(connection, 'execute').resolves([FAKE_PRODUCT]);
       const getProduct = await productModels.getById(1);
@@ -43,6 +45,15 @@ describe('Test Model products', () => {
       expect(updateProduct).to.be.all.keys('id', 'name');
       expect(updateProduct.id).to.be.equal(FAKE_PRODUCT.id);
       expect(updateProduct.name).to.be.equal(FAKE_PRODUCT.name);
+    });
+  });
+
+  describe('Testa ao deletar um produto', () => {
+    it('Deve retornar o id', async () => {
+      sinon.stub(connection, 'execute').resolves(FAKE_PRODUCT);
+      const deleteProduct = await productModels.deleteProduct({ id: 1 });
+      expect(deleteProduct).to.be.all.keys('id');
+      expect(deleteProduct.id).to.be.equal(FAKE_PRODUCT.id);
     });
   });
 });
