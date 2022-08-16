@@ -21,4 +21,12 @@ const create = async (req, res) => {
   return res.status(code).json(data);
 };
 
-module.exports = { create, getAll, getById };
+const deleteSale = async (req, res) => {
+  const { code, message } = await salesProductsServices.deleteSale(req.params);
+  if (message) {
+    return res.status(code).json({ message });
+  }
+  return res.status(code).end();
+};
+
+module.exports = { create, getAll, getById, deleteSale };

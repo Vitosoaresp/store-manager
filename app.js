@@ -20,6 +20,7 @@ app.delete('/products/:id', rescue(productController.deleteProduct));
 app.get('/sales/:id', rescue(salesProductsController.getById));
 app.get('/sales', rescue(salesProductsController.getAll));
 app.post('/sales', rescue(salesProductsController.create));
+app.delete('/sales/:id', rescue(salesProductsController.deleteSale));
 
 app.use((err, _req, res, _next) => {
   console.log(err);
