@@ -6,11 +6,11 @@ const productServices = require('../../../services/productServices');
 describe('Test Services products', () => {
   beforeEach(sinon.restore);
   const FAKE_PRODUCT = { id: 1, name: 'Baby yoda' };
+  const FAKE_PRODUCTS = [
+    { id: 1, name: 'Baby yoda' }, { id: 2, name: 'Darth vader' }, { id: 3, name: 'Luke skywalker' },
+  ];
 
   describe('Ao buscar pelos produtos', () => {
-    const FAKE_PRODUCTS = [
-      { id: 1, name: 'Baby yoda' }, { id: 2, name: 'Darth vader' }, { id: 3, name: 'Luke skywalker' },
-    ];
     it('Deve retornar todos os produtos', async () => {
       sinon.stub(productModels, 'getAll').resolves(FAKE_PRODUCTS);
       const { data } = await productServices.getAll();
@@ -21,23 +21,47 @@ describe('Test Services products', () => {
         expect(product.name).to.be.equal(FAKE_PRODUCTS[i].name);
       });
     })
-  }),
-    describe('Ao buscar por um produto', () => {
-      it('Deve retornar o produto especifico', async () => {
-        sinon.stub(productModels, 'getById').resolves([FAKE_PRODUCT]);
-        const { data, message } = await productServices.getById(1);
-        expect(message).to.be.undefined;
-        expect(data).to.be.all.keys('id', 'name');
-        expect(data.id).to.be.equal(1);
-        expect(data.name).to.be.equal('Baby yoda');
-      })
-      it('Caso o produto não exista deve retornar a mensagem "Product not found"', async () => {
-        sinon.stub(productModels, 'getById').resolves([null]);
-        const { data, message } = await productServices.getById(999);
-        expect(data).to.be.undefined;
-        expect(message).to.be.equal('Product not found');
-      });
+  });
+
+  describe('Ao buscar por um produto por params', () => {
+    it('Deve retornar o produto especifico', async () => {
+      sinon.stub(productModels, 'getById').resolves([FAKE_PRODUCT]);
+      const { data, message } = await productServices.getById(1);
+      expect(message).to.be.undefined;
+      expect(data).to.be.all.keys('id', 'name');
+      expect(data.id).to.be.equal(1);
+      expect(data.name).to.be.equal('Baby yoda');
+    })
+    it('Caso o produto não exista deve retornar a mensagem "Product not found"', async () => {
+      sinon.stub(productModels, 'getById').resolves([null]);
+      const { data, message } = await productServices.getById(999);
+      expect(data).to.be.undefined;
+      expect(message).to.be.equal('Product not found');
     });
+  });
+
+  describe('Ao buscar pro um produto por query', () => {
+    it('Deve retornar todos os produtos que contenham o nome especifico', async () => {
+      sinon.stub(productModels, 'getAll').resolves(FAKE_PRODUCTS);
+      const { data, code } = await productServices.getByQuery({ q: 'vader' });
+      console.log(data);
+      expect(code).to.be.a.not.undefined;
+      expect(data).to.be.a.not.undefined;
+      expect(data).to.be.an('array');
+      expect(data[0]).to.have.keys('id', 'name');
+      expect(data[0]).to.equals(FAKE_PRODUCTS[1]);
+    });
+
+    it('Caso não encontre nenhum produto deve retornar um array vazio', async () => {
+      sinon.stub(productModels, 'getAll').resolves(FAKE_PRODUCTS);
+      const { data, code } = await productServices.getByQuery({ q: 'produto_que_não_existe' });
+      expect(code).to.be.a.not.undefined;
+      expect(data).to.be.a.not.undefined;
+      expect(data).to.be.an('array');
+      expect(data).to.be.empty;
+    });
+
+  });
 
   describe('Ao cadastrar um produto', () => {
     const FAKE_PRODUCT = { id: 5, name: 'Baby yoda 2.0' };
