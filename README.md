@@ -45,7 +45,7 @@ Back-end:
 - [GET] http://localhost:3000/sales
 - [GET] http://localhost:3000/sales/id
 
-  #### Criar um produto
+  #### Criar ou Atualizar um produto
   
   > Body da requisição deve conter algo como:
     ```bash
@@ -55,7 +55,7 @@ Back-end:
     ```
 
 
-  #### Criar uma venda
+  #### Criar ou Atualizar uma venda
   
   > Body da requisição deve conter algo como:
     ```bash
