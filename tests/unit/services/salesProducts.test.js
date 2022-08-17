@@ -42,7 +42,7 @@ describe('Test Services sales_products', () => {
       expect(data.quantity).to.be.equal(2);
       expect(message).to.be.undefined;
     });
-    it('Se não encontrar a venda especifica deve retornar um erro', async () => {
+    it('Se não encontrar a venda especifica deve retornar uma mensagem "Sale not found"', async () => {
       sinon.stub(salesProductsModels, 'getById').resolves([]);
       const { message, data } = await salesProductsServices.getById(1);
       expect(message).to.be.equal('Sale not found');
@@ -73,7 +73,7 @@ describe('Test Services sales_products', () => {
       expect(data.id).to.equal(FAKE_INSERT_ID);
     });
 
-    it('Testa se caso o produto não exista deve retornar erro', async () => {
+    it('Caso o produto não exista deve retornar a mensagem "Product not found"', async () => {
       sinon.stub(salesModels, 'create').resolves(FAKE_INSERT_ID);
       sinon.stub(salesProductsModels, 'create').resolves();
       sinon.stub(productServices, 'getById').resolves(PRODUCT_NOT_FOUND);
@@ -83,7 +83,7 @@ describe('Test Services sales_products', () => {
       expect(message).to.equal('Product not found');
     });
 
-    it('Testa se caso não passe um id do produto deve retornar erro', async () => {
+    it('Caso não passe um id do produto deve retornar a mensagem "productId is required"', async () => {
       sinon.stub(salesModels, 'create').resolves(FAKE_INSERT_ID);
       sinon.stub(salesProductsModels, 'create').resolves(PRODUCT_ID_IS_REQUIRED);
 
@@ -92,7 +92,7 @@ describe('Test Services sales_products', () => {
       expect(message).to.equal('"productId" is required');
     });
 
-    it('Testa se caso não passe uma quantidade deve retornar erro', async () => {
+    it('Caso não passe uma quantidade deve retornar a mensagem "quantity is required"', async () => {
       sinon.stub(salesModels, 'create').resolves(FAKE_INSERT_ID);
       sinon.stub(salesProductsModels, 'create').resolves(QUANTITY_IS_REQUIRED);
 
@@ -101,13 +101,32 @@ describe('Test Services sales_products', () => {
       expect(message).to.equal('"quantity" is required');
     });
 
-    it('Testa se caso a quantidade seja menor que 1 deve retornar erro', async () => {
+    it('Caso a quantidade seja menor que 1 deve retornar a mensagem "quantity must be greater than or equal to 1"', async () => {
       sinon.stub(salesModels, 'create').resolves(FAKE_INSERT_ID);
       sinon.stub(salesProductsModels, 'create').resolves(QUANTITY_LESS_THAN_1);
 
       const { data, message } = await salesProductsServices.create(FAKE_SALES_QUANTITY_LESS_THAN_1);
       expect(data).to.be.a.undefined;
       expect(message).to.equal('"quantity" must be greater than or equal to 1');
+    });
+  });
+
+  describe('Ao deletar uma venda', () => {
+    const FAKE_SALE_DELETE = [{ productId: 1, quantity: 1 }];
+    it('Se sucesso deve retornar somente o "code"', async () => {
+      sinon.stub(salesModels, 'getById').resolves(FAKE_SALE_DELETE);
+      sinon.stub(salesModels, 'deleteSale').resolves();
+      const { code, message } = await salesProductsServices.deleteSale({ id: 1 });
+      expect(message).to.be.a.undefined;
+      expect(code).to.be.not.undefined;
+    });
+
+    it('Caso a venda não exista deve retornar a mensagem "Sale not found"', async () => {
+      sinon.stub(salesModels, 'getById').resolves([]);
+      sinon.stub(salesModels, 'deleteSale').resolves();
+      const { code, message } = await salesProductsServices.deleteSale({ id: 99999 });
+      expect(message).to.equal('Sale not found');
+      expect(code).to.be.not.undefined;
     });
   });
 });
