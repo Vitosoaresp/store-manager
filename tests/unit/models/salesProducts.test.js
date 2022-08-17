@@ -7,7 +7,7 @@ const salesModels = require('../../../models/salesModels');
 describe('Test Model Sales_Products e sales', () => {
   beforeEach(sinon.restore);
 
-  const FAKE_SALES = [
+  const FAKE_SALES_PRODUCTS = [
     {
       "saleId": 1,
       "date": "2021-09-09T04:54:29.000Z",
@@ -21,10 +21,12 @@ describe('Test Model Sales_Products e sales', () => {
       "quantity": 2
     }
   ];
+  const FAKE_SALES = { saleId: 1, productId: 1, quantity: 1 };
+
 
   describe('Ao listar todas as vendas', () => {
     it('Deve retornar todas as vendas', async () => {
-      sinon.stub(connection, 'execute').resolves([FAKE_SALES]);
+      sinon.stub(connection, 'execute').resolves([FAKE_SALES_PRODUCTS]);
       const getSales = await salesProductsModels.getAll();
       expect(getSales).to.be.an('array');
       expect(getSales[0]).to.be.have.all.keys('saleId', 'date', 'productId', 'quantity');
@@ -33,7 +35,7 @@ describe('Test Model Sales_Products e sales', () => {
 
   describe('Ao listar uma venda', () => {
     it('Deve retornar uma venda com os atributos "saleId, date, productId e quantity"', async () => {
-      sinon.stub(connection, 'execute').resolves([FAKE_SALES[0]]);
+      sinon.stub(connection, 'execute').resolves([FAKE_SALES_PRODUCTS[0]]);
       const getSale = await salesProductsModels.getById({ id: 1 });
       expect(getSale).to.be.have.all.keys('saleId', 'date', 'productId', 'quantity');
       expect(getSale.saleId).to.be.equal(1);
@@ -51,7 +53,6 @@ describe('Test Model Sales_Products e sales', () => {
   });
 
   describe('Ao criar uma venda', () => {
-    const FAKE_SALES = { saleId: 1, productId: 1, quantity: 1 };
     it('se sucesso deve retornar true', async () => {
       sinon.stub(connection, 'execute').resolves(FAKE_SALES);
       const createSales = await salesProductsModels.create(FAKE_SALES);
@@ -61,6 +62,14 @@ describe('Test Model Sales_Products e sales', () => {
       sinon.stub(connection, 'execute').resolves([{ insertId: 1 }]);
       const insertId = await salesModels.create();
       expect(insertId).to.be.equal(1);
+    });
+  });
+
+  describe('Ao atualizar uma venda', () => {
+    it('Se sucesso deve retornar true', async () => {
+      sinon.stub(connection, 'execute').resolves();
+      const updateSales = await salesProductsModels.update(FAKE_SALES);
+      expect(updateSales).to.be.true;
     });
   });
 
