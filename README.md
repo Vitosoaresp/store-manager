@@ -33,7 +33,7 @@ Back-end:
   npm install
   ```
 
-## Para rodar os Testes
+## Para rodar os Tests
 
 > ```npm run test```
 
