@@ -15,6 +15,11 @@ const getById = async (req, res) => {
   return res.status(code).json(data);
 };
 
+const getByQuery = async (req, res) => {
+  const { code, data } = await productServices.getByQuery(req.query);
+  return res.status(code).json(data);
+};
+
 const create = async (req, res) => {
   const { code, data, message } = await productServices.create(req.body);
   if (message) {
@@ -41,4 +46,4 @@ const deleteProduct = async (req, res) => {
   return res.status(code).end();
 };
 
-module.exports = { getAll, getById, create, update, deleteProduct };
+module.exports = { getAll, getById, create, update, deleteProduct, getByQuery };

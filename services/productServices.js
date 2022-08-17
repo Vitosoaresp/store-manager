@@ -15,6 +15,12 @@ const getById = async ({ id }) => {
   return { code: 200, data: product };
 };
 
+const getByQuery = async ({ q }) => {
+  const allProducts = await productModel.getAll();
+  const productsByQuery = allProducts.filter((product) => product.name.includes(q));
+  return { code: 200, data: productsByQuery };
+};
+
 const create = async ({ name }) => {
   if (!name) {
     return { code: 400, message: '"name" is required' };
@@ -51,4 +57,4 @@ const deleteProduct = async ({ id }) => {
   return { code: 204 };
 };
 
-module.exports = { getAll, getById, create, update, deleteProduct };
+module.exports = { getAll, getById, create, update, deleteProduct, getByQuery };
