@@ -25,25 +25,46 @@ const isInvalidProduct = async (sales) => {
   return result;
 };
 
-const create = async (sales) => {
-  if (sales.find((sale) => sale.productId === undefined)) {
+const validateBody = async (data) => {
+  if (data.find((sale) => sale.productId === undefined)) {
     return { code: 400, message: '"productId" is required' };
   }
-  if (sales.find((sale) => sale.quantity === undefined)) {
+  if (data.find((sale) => sale.quantity === undefined)) {
     return { code: 400, message: '"quantity" is required' };
   }
-  if (sales.find((sale) => sale.quantity < 1)) {
+  if (data.find((sale) => sale.quantity < 1)) {
     return { code: 422, message: '"quantity" must be greater than or equal to 1' };
   }
-  const invalidProducts = await isInvalidProduct(sales);
+  const invalidProducts = await isInvalidProduct(data);
   if (invalidProducts.includes(undefined)) {
     return { code: 404, message: 'Product not found' };
+  }
+  return { status: true };
+};
+
+const create = async (sales) => {
+  const { code, status, message } = await validateBody(sales);
+  if (!status) {
+    return { code, message };
   }
   const saleId = await salesModels.create();
   await Promise.all(sales.map(
     ({ quantity, productId }) => salesProuctsModels.create({ saleId, quantity, productId }),
   ));
   return { code: 201, data: { id: saleId, itemsSold: sales } };
+};
+
+const update = async ({ id }, sales) => {
+  const { code, status, message } = await validateBody(sales);
+  if (!status) {
+    return { code, message };
+  }
+  const existingSale = await salesProuctsModels.getById({ id });
+  if (existingSale.length === 0 || existingSale === undefined) {
+    return { code: 404, message: 'Sale not found' };
+  }
+  await Promise.all(sales.map((sale) => salesProuctsModels.update({ id, ...sale })));
+  return { code: 200, data: { saleId: id, itemsUpdated: sales } };
 };
 
 const deleteSale = async ({ id }) => {
@@ -55,4 +76,4 @@ const deleteSale = async ({ id }) => {
   return { code: 204 };
 };
 
-module.exports = { create, getAll, getById, deleteSale };
+module.exports = { create, getAll, getById, deleteSale, update };

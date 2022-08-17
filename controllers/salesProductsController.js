@@ -21,6 +21,15 @@ const create = async (req, res) => {
   return res.status(code).json(data);
 };
 
+const update = async (req, res) => {
+  const { id } = req.params;
+  const { code, message, data } = await salesProductsServices.update({ id }, req.body);
+  if (message) {
+    return res.status(code).json({ message });
+  }
+  return res.status(code).json(data);
+};
+
 const deleteSale = async (req, res) => {
   const { code, message } = await salesProductsServices.deleteSale(req.params);
   if (message) {
@@ -29,4 +38,4 @@ const deleteSale = async (req, res) => {
   return res.status(code).end();
 };
 
-module.exports = { create, getAll, getById, deleteSale };
+module.exports = { create, getAll, getById, deleteSale, update };
