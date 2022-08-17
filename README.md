@@ -1,16 +1,75 @@
-# 🚧 README em construção 🚧
+# Store Manager
 
-<!-- Olá, Tryber!
+# Contexto
+Este projeto trata-se de uma API RESTful, que faz gerenciamento de vendas no formato dropshipping em que é possível criar, visualizar, deletar e atualizar produtos e vendas.
+Foi prouzido utilizando a arquitetura MSC (model-service-controller)!
 
-Esse é apenas um arquivo inicial para o README do seu projeto.
+## Técnologias usadas
 
-É essencial que você preencha esse documento por conta própria, ok?
+Back-end:
 
-Não deixe de usar nossas dicas de escrita de README de projetos, e deixe sua criatividade brilhar!
+> Desenvolvido usando: NodeJS, ExpressJS, MYSQL
 
-⚠️ IMPORTANTE: você precisa deixar nítido:
-- quais arquivos/pastas foram desenvolvidos por você; 
-- quais arquivos/pastas foram desenvolvidos por outra pessoa estudante;
-- quais arquivos/pastas foram desenvolvidos pela Trybe.
+## Como rodar via Docker
 
--->
+  > Configure suas variaveis no dockerfile
+
+  ```bash
+  git clone git@github.com:Vitosoaresp/store-manager.git
+  cd store-manager
+  docker-compose up -d
+  docker exec -it store_manager bash
+  npm install
+  npm run migration
+  ```
+
+## Como rodar Sem Docker
+
+> Crie um arquivo .env e configure as variaveis
+
+ ```bash
+  git clone git@github.com:Vitosoaresp/store-manager.git
+  cd store-manager
+  npm install
+  ```
+
+## Para rodar os Testes
+
+> ```npm run test```
+
+## Endpoints
+
+- [GET] http://localhost:3000/products
+- [GET] http://localhost:3000/products/id
+- [GET] http://localhost:3000/products/search?q=SUA_BUSCA
+- [GET] http://localhost:3000/sales
+- [GET] http://localhost:3000/sales/id
+
+  #### Criar um produto
+  
+  > Body da requisição deve conter algo como:
+    ```bash
+     {
+      "name": "Nome do produto"
+     }
+    ```
+
+
+  #### Criar uma venda
+  
+  > Body da requisição deve conter algo como:
+    ```bash
+  [
+      {
+        "productId": 1,
+        "quantity":1
+      },
+      {
+        "productId": 2,
+        "quantity":5
+      }
+  ]
+
+    ```
+
+
